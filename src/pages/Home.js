@@ -2,14 +2,19 @@ import React, {useEffect} from "react";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { loadGames } from '../actions/gamesAction';
+
 //Components
 import Game from '../components/Game';
 // Import Styled Components and Effects frrame
 import styled from 'styled-components';
 import {motion} from "framer-motion";
-
+import GameDetail from "../components/GameDetail";
+import { useLocation } from "react-router";
 const Home = () => {
     const dispatch = useDispatch();
+    const location = useLocation();
+    const pathId = location.pathname.split("/")[2];
+
     // Fetch games
     useEffect(() => {
         dispatch(loadGames());
@@ -18,22 +23,23 @@ const Home = () => {
     const { popular, newGames, upcoming } = useSelector(state => state.games);
     return (
         <GameList>
+            {pathId && <GameDetail/>}
             <h2>Upcoming Games</h2>
             <Games>
                 {upcoming.map((game,id) => (
-                    <Game name={game.name} released={game.released} image={game.background_image} key={id}></Game>
+                    <Game name={game.name} released={game.released} image={game.background_image} id={game.id} key={id}></Game>
                 ))}
             </Games>
             <h2>Popular Games</h2>
             <Games>
                 {popular.map((game,id) => (
-                    <Game name={game.name} released={game.released} image={game.background_image} key={id}></Game>
+                    <Game name={game.name} released={game.released} image={game.background_image} id={game.id} key={id}></Game>
                 ))}
             </Games>
             <h2>New Games</h2>
             <Games>
                 {newGames.map((game,id) => (
-                    <Game name={game.name} released={game.released} image={game.background_image} key={id}></Game>
+                    <Game name={game.name} released={game.released} image={game.background_image} id={game.id} key={id}></Game>
                 ))}
             </Games>
         </GameList>
