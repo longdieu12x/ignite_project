@@ -4,8 +4,19 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { useHistory } from 'react-router';
 import { useSelector } from 'react-redux';
+import { smallImage } from '../utils';
 
-const GameDetail = () => {
+import playstation from '../img/playstation.svg';
+import steam from '../img/steam.svg';
+import xbox from '../img/xbox.svg';
+import apple from '../img/apple.svg';
+import gamepad from '../img/gamepad.svg';
+import nintendo from '../img/nintendo.svg';
+
+import starEmpty from '../img/star-empty.png';
+import starFull from '../img/star-full.png';
+
+const GameDetail = ({ pathId }) => {
     const history = useHistory();
     const { screen,game, isLoading } = useSelector(state=> state.detail);
     const { results: screen_shots } = screen;
@@ -16,34 +27,62 @@ const GameDetail = () => {
             history.push('/');
         }
     }
+
+    const getPlatform = (platform) => {
+      switch(platform){
+        case "PlayStation 4":
+          return playstation;
+        case "Xbox One":
+          return xbox;
+        case "PC":
+          return steam;
+        case "Nintendo Switch":
+          return nintendo;
+        case "iOS":
+          return apple;
+        default:
+          return gamepad;
+      }
+    }
+
+    const getStars = () => {
+      const stars = [];
+      const rating = Math.floor(game.rating);
+      for (let i = 1; i <= 5; i++){
+        if (i <= rating) stars.push(<img alt={`star + ${i}`} key={i} src={starFull}/>)
+        else stars.push(<img alt={`star + ${i}`} key={i} src={starEmpty}/>)
+      }
+      return stars;
+    }
     return (
         <React.Fragment>
         { !isLoading && 
             <CardShadow onClick={exitDetailHandler} className="card-shadow">
-                <Detail>
+                <Detail layoutId={pathId}>
                     <Stats>
                         <div className="rating">
-                            <h3>{game.name}</h3>
+                            <motion.h3 layoutId={`title ${pathId}`}>{game.name}</motion.h3>
                             <p>Rating: {game.rating}</p>
+                            {getStars()}
                         </div>
                         <Info>
-                            <h3>Platforms</h3>
+                            <motion.h3>Platforms</motion.h3>
                             <Platforms>
                                 {game_platforms.map(data => 
-                                    <h3 key={data.platform.id}>{data.platform.name}</h3>
+                                    <img alt={data.platform.name} key={data.platform.id} src={getPlatform(data.platform.name)}></img>
                                 )}
                             </Platforms>
                         </Info>
                     </Stats>
                     <Media>
-                        <img src={game.background_image} alt={game.background_image} />
+                        <motion.img layoutId={`img ${pathId}`} src={smallImage(game.background_image, 1280)} alt={game.background_image} />
                     </Media>
                     <Description>
                         <p>{game.description_raw}</p>
                     </Description>
                     <div className="gallery">
                         {screen_shots.map(screen => 
-                            <img src={screen.image} key={screen.id} alt={screen.image} />
+                            <img src={smallImage(screen.image, 1280)} key={screen.id} alt={screen.image} />
                         )}
                     </div>
                 </Detail>

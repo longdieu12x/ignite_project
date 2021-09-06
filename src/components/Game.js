@@ -4,7 +4,8 @@ import {motion} from "framer-motion";
 import { useDispatch } from 'react-redux';
 import { loadDetail } from '../actions/detailAction';
 import { Link } from 'react-router-dom';
-
+import { smallImage } from '../utils';
+import { popUp } from '../animation';
 const Game = ({name, released, image, id}) => {
     // Load Detail Handler
     const dispatch = useDispatch();
@@ -12,12 +13,13 @@ const Game = ({name, released, image, id}) => {
         document.body.style.overflow = "hidden";
         dispatch(loadDetail(id));
     }
+    const stringId = id + '';
     return (
-        <StyledGame onClick={loadDetailHandler}>
+        <StyledGame variants={popUp} animate="show" initial="hidden" layoutId={stringId} onClick={loadDetailHandler}>
             <Link to={`/game/${id}`}>
-                <h3>{name}</h3>
+                <motion.h3 layoutId={`title ${stringId}`}>{name}</motion.h3>
                 <p>{released}</p>
-                <img src={image} alt={name} />
+                <motion.img layoutId={`img ${stringId}`} src={smallImage(image,640)} alt={name} />
             </Link>
         </StyledGame>
     );
